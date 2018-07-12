@@ -105,6 +105,41 @@ class C_CI_NU_2(BaseAppAsdu):
         return output
 
 
+class M_IT_TG_2(BaseAppAsdu):
+    type = 8
+
+    def __init__(self):
+        self.valores = []
+        self.tiempo = None
+        pass
+
+    def from_hex(self, data, cualificador_ev):
+        for i in range(0, cualificador_ev):
+            position = i * 6  # 1 byte de typo 4 de medida 1 de cualificador
+            # total integrado (4 octetos de energía+1 octeto con cualificadores
+            # y número de secuencia), para cada uno de los totales.
+            direccion_objeto = struct.unpack("B", data[position:position+1])[0]
+            total_integrado = struct.unpack("I",
+                                            data[position + 1:position + 5])[0]
+            cualificador = struct.unpack("B", data[position+5:position+6])[0]
+            self.valores.append((direccion_objeto,
+                                 total_integrado, cualificador))
+        position = position + 6
+        # ok, ahora el tiempo
+        self.tiempo = TimeA()
+        self.tiempo.from_hex(data[position:position+5])
+
+    def __repr__(self):
+        output = " -- {} Begin -- \n".format(self.__class__.__name__)
+        output += ("   contadores (direccion objeto, total integrado"
+                   ", cualificador) " + str(self.valores) + "\n")
+        output += "   tiempo: " + str(self.tiempo) + "\n"
+        output += " -- {} End \n".format(self.__class__.__name__)
+        return output
+
+
+
+
 class M_IT_TK_2(BaseAppAsdu):
     type = 11
 

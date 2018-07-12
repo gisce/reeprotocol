@@ -6,12 +6,15 @@ sys.path.append(library_path)
 
 import getopt
 import logging
+import reeprotocol.moxa
 import reeprotocol.ip
 import reeprotocol.protocol
 import datetime
 
 def run_example(ip, port, der, dir_pm, clave_pm):
-    physical_layer = reeprotocol.ip.Ip((ip, port))
+    ip_layer = reeprotocol.ip.Ip((ip, port))
+    # Enviar comandes AT (modem)
+    physical_layer = reeprotocol.moxa.Moxa('696569962', ip_layer)
     link_layer = reeprotocol.protocol.LinkLayer(der, dir_pm)
     link_layer.initialize(physical_layer)
     app_layer = reeprotocol.protocol.AppLayer()
@@ -25,8 +28,8 @@ def run_example(ip, port, der, dir_pm, clave_pm):
     logging.info("CLIENTE authenticate response {}".format(resp))
     logging.info("before read")
     for resp in app_layer\
-        .read_integrated_totals(datetime.datetime(2018, 3, 1, 1, 0),
-                                datetime.datetime(2018, 4, 1, 1, 0)):
+        .read_integrated_totals(datetime.datetime(2018, 4, 1, 0, 0),
+                                datetime.datetime(2018, 4, 2, 1, 0)):
         logging.info("read response {}".format(resp))
     physical_layer.disconnect()
     
