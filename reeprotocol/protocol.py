@@ -4,11 +4,7 @@ from .base_asdu import (
     AsduParser, FixedAsdu, VariableAsdu
 )
 import traceback
-from .app_asdu import (
-    C_AC_NA_2,
-    C_CI_NU_2,
-    C_FS_NA_2,
-)
+from .app_asdu import *
 
 logger = logging.getLogger('reeprotocol')
 
@@ -70,6 +66,8 @@ class AppLayer(metaclass=ABCMeta):
             if asdu_resp.causa_tm == 0x12:
                 logger.info("requested integration period not available")
                 raise IntegrationPeriodNotAvailable()
+            else:
+                raise Exception('causa no detectada')
 
     def authenticate(self, clave_pm):
         asdu = self.create_asdu_request(C_AC_NA_2(clave_pm))
@@ -93,6 +91,18 @@ class AppLayer(metaclass=ABCMeta):
                 yield resp
         except IntegrationPeriodNotAvailable as e:
             pass
+    
+    def read_datetime(self):
+        asdu = self.create_asdu_request(C_TI_NA_2())
+        resps = list(self.process_request(asdu))
+        for resp in self.process_requestresponse():
+            yield resp
+    
+    def get_info(self):
+        asdu = self.create_asdu_request(C_RD_NA_2())
+        resps = list(self.process_request(asdu))
+        for resp in self.process_requestresponse():
+            yield resp
             
     def create_asdu_request(self, user_data, registro=0):
         asdu = VariableAsdu()

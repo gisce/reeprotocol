@@ -3,6 +3,17 @@ import struct
 import datetime
 
 
+__all__ = [
+    'C_AC_NA_2',
+    'C_CI_NU_2',
+    'C_FS_NA_2',
+    'C_TI_NA_2',
+    'C_RD_NA_2',
+    'M_IT_TK_2',
+    'M_TI_TA_2'
+]
+
+
 class AppAsduRegistry(type):
     types = dict()
 
@@ -37,7 +48,46 @@ class BaseAppAsdu(metaclass=AppAsduRegistry):
         )
 
 
+class C_TI_NA_2(BaseAppAsdu):
+    """
+    Leer fecha y hora actuales
+    """
+    type = 103
+    length = 0x09
+    
+    def to_bytes(self):
+        return bytes()
 
+    def from_hex(self, data, cualificador_ev):
+        pass
+
+
+class M_TI_TA_2(BaseAppAsdu):
+    """
+    Fecha y hora actuales
+    """
+    type = 72
+
+    def __init__(self):
+        self.tiempo = None
+
+    def from_hex(self, data, cualificador_ev):
+        self.tiempo = TimeA()
+        self.tiempo.from_hex(data)
+
+
+class C_RD_NA_2(BaseAppAsdu):
+    """
+    Leer el código de fabricante e identificador de equipo
+    """
+    type = 100
+    length = 0x09
+    
+    def to_bytes(self):
+        return bytes()
+
+    def from_hex(self, data, cualificador_ev):
+        pass
 
 class C_AC_NA_2(BaseAppAsdu):
     """
@@ -58,14 +108,12 @@ class C_AC_NA_2(BaseAppAsdu):
     def to_bytes(self):
         return struct.pack("I", self.clave)
 
-    def __repr__(self):
-        output = " -- C_AC_NA_2 Begin -- \n"
-        output += "  clave: " + str(self.clave) + "\n"
-        output += " -- C_AC_NA_2 End \n"
-        return output
-
 
 class C_FS_NA_2(BaseAppAsdu):
+    """
+    Finalizar sesión
+    """
+
     type = 187
 
     def from_hex(self, data, cualificador_ev):
