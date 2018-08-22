@@ -1,3 +1,9 @@
+⚠️ This repository have been **moved to a new project**: `iec870ree <https://github.com/gisce/iec870ree>`_ ⚠️
+============================================================================================================
+
+You can see the reasons `here <https://github.com/javierdelapuente/reeprotocol/issues/10>`_
+
+
 reeprotocol
 ###########
 
